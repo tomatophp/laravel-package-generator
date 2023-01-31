@@ -1,0 +1,38 @@
+{
+    "name": "{{ vendor }}/{{ package }}",
+    "type": "library",
+    "description": "{{ description }}",
+    "keywords": [
+        "php",
+        "laravel",
+        "template"
+    ],
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "{{ namespace }}\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "{{ namespace }}\\{{ provider }}"
+            ]
+        }
+    },
+    "authors": [
+        {
+            "name": "{{ author }}",
+            "email": "{{ email }}"
+        }
+    ],
+    "require": {
+        "php": "^8.0.2",
+        "queents/console-helpers": "^1.0"
+    }
+}

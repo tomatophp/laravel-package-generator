@@ -1,0 +1,38 @@
+{
+    "name": "tomatophp/laravel-package-generator",
+    "type": "library",
+    "description": "Generate your Laravel package with ease.",
+    "keywords": [
+        "php",
+        "laravel",
+        "template"
+    ],
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "TomatoPHP\\LaravelPackageGenerator\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "TomatoPHP\\LaravelPackageGenerator\\LaravelPackageGeneratorServiceProvider"
+            ]
+        }
+    },
+    "authors": [
+        {
+            "name": "Fady Mondy",
+            "email": "EngFadyMondy@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0.2",
+        "tomatophp/console-helpers": "^1.0"
+    }
+}
