@@ -38,7 +38,6 @@ class {{ name }} extends Command
     {
         $this->info('Publish Vendor Assets');
         $this->callSilent('optimize:clear');
-        $this->call('vendor:publish', ['--provider' => '{{ namespace }}\{{ provider }}']);
         $this->yarnCommand(['install']);
         $this->yarnCommand(['build']);
         $this->artisanCommand(["migrate"]);

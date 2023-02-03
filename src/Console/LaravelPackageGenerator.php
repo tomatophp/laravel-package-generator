@@ -157,8 +157,16 @@ class LaravelPackageGenerator extends Command
             $register->push('        //Publish Config');
             $register->push('        $this->publishes([');
             $register->push('           __DIR__.\'/../config/'.$packageNamePath.'.php\' => config_path(\''.$packageNamePath.'.php\'),');
-            $register->push('        ], \'config\');');
+            $register->push('        ], \''.$packageNamePath.'-config\');');
             $register->push(" ");
+
+            //Generate Config file
+            $this->generateStubs(
+                $this->stubPath . 'config.stub',
+                $packagePath . '/config/'.$packageNamePath.'.php',
+                [
+                ],
+            );
         }
         if($packageMigration === 'yes'){
             $register->push('        //Register Migrations');
@@ -167,7 +175,7 @@ class LaravelPackageGenerator extends Command
             $register->push('        //Publish Migrations');
             $register->push('        $this->publishes([');
             $register->push('           __DIR__.\'/../database/migrations\' => database_path(\'migrations\'),');
-            $register->push('        ], \'migrations\');');
+            $register->push('        ], \''.$packageNamePath.'-migrations\');');
         }
         if($packageView === 'yes'){
             $register->push('        //Register views');
@@ -176,15 +184,15 @@ class LaravelPackageGenerator extends Command
             $register->push('        //Publish Views');
             $register->push('        $this->publishes([');
             $register->push('           __DIR__.\'/../resources/views\' => resource_path(\'views/vendor/'.$packageNamePath.'\'),');
-            $register->push('        ], \'views\');');
+            $register->push('        ], \''.$packageNamePath.'-views\');');
             $register->push(" ");
             $register->push('        //Register Langs');
             $register->push('        $this->loadTranslationsFrom(__DIR__.\'/../resources/lang\', \''.$packageNamePath.'\');');
             $register->push(" ");
             $register->push('        //Publish Lang');
             $register->push('        $this->publishes([');
-            $register->push('           __DIR__.\'/../resources/lang\' => resource_path(\'lang/vendor/'.$packageNamePath.'\'),');
-            $register->push('        ], \'lang\');');
+            $register->push('           __DIR__.\'/../resources/lang\' => app_path(\'lang/vendor/'.$packageNamePath.'\'),');
+            $register->push('        ], \''.$packageNamePath.'-lang\');');
             $register->push(" ");
         }
         if($packageRoute === 'yes') {
@@ -243,9 +251,6 @@ class LaravelPackageGenerator extends Command
                 $packagePath
             ]
         );
-
-
-
 
         $this->info('Package boilerplate generated successfully');
     }
