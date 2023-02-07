@@ -33,6 +33,6 @@
     ],
     "require": {
         "php": "^8.0.2",
-        "queents/console-helpers": "^1.0"
+        "tomatophp/console-helpers": "^1.0"
     }
 }
