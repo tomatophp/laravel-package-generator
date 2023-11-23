@@ -191,7 +191,7 @@ class LaravelPackageGenerator extends Command
             $register->push(" ");
             $register->push('        //Publish Lang');
             $register->push('        $this->publishes([');
-            $register->push('           __DIR__.\'/../resources/lang\' => app_path(\'lang/vendor/'.$packageNamePath.'\'),');
+            $register->push('           __DIR__.\'/../resources/lang\' => base_path(\'lang/vendor/'.$packageNamePath.'\'),');
             $register->push('        ], \''.$packageNamePath.'-lang\');');
             $register->push(" ");
         }
