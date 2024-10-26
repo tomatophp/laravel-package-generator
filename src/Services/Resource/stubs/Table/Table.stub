@@ -1,0 +1,49 @@
+<?php
+
+namespace {{ namespace }};
+
+use Filament\Tables\Columns\Column;
+use Filament\Tables\Table;
+
+class {{ name }}
+{
+    protected static array $columns = [];
+
+    public static function make(Table $table): Table
+    {
+        return $table
+            ->deferLoading()
+            ->bulkActions({{ bulkActions }}::make())
+            ->actions({{ actions }}::make())
+            ->filters({{ filters }}::make())
+            ->headerActions({{ headerActions }}::make())
+            ->columns(self::getColumns());
+    }
+
+    public static function getDefaultColumns(): array
+    {
+        return [
+            Columns\ID::make(),
+            Columns\CreatedAt::make(),
+            Columns\UpdatedAt::make(),
+        ];
+    }
+
+    private static function getColumns(): array
+    {
+        return array_merge(self::getDefaultColumns(), self::$columns);
+    }
+
+    public static function register(Column | array $column): void
+    {
+        if (is_array($column)) {
+            foreach ($column as $item) {
+                if ($item instanceof Column) {
+                    self::$columns[] = $item;
+                }
+            }
+        } else {
+            self::$columns[] = $column;
+        }
+    }
+}

@@ -1,4 +1,10 @@
+![Screenshot](https://raw.githubusercontent.com/{{ vendor }}/{{ package }}/master/art/screenshot.jpg)
+
 # {{ name }}
+
+[![Latest Stable Version](https://poser.pugx.org/{{ vendor }}/{{ package }}/version.svg)](https://packagist.org/packages/{{ vendor }}/{{ package }})
+[![License](https://poser.pugx.org/{{ vendor }}/{{ package }}/license.svg)](https://packagist.org/packages/{{ vendor }}/{{ package }})
+[![Downloads](https://poser.pugx.org/{{ vendor }}/{{ package }}/d/total.svg)](https://packagist.org/packages/{{ vendor }}/{{ package }})
 
 {{ description }}
 
@@ -12,6 +18,8 @@ after install your package please run this command
 ```bash
 php artisan {{ command }}:install
 ```
+
+{{ plugin }}
 
 ## Publish Assets
 
@@ -39,14 +47,6 @@ you can publish migrations file by use this command
 php artisan vendor:publish --tag="{{ package }}-migrations"
 ```
 
-## Support
-
-you can join our discord server to get support [TomatoPHP](https://discord.gg/Xqmt35Uh)
-
-## Docs
-
-you can check docs of this package on [Docs](https://docs.tomatophp.com/plugins/laravel-package-generator)
-
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
@@ -57,7 +57,7 @@ Please see [SECURITY](SECURITY.md) for more information about security.
 
 ## Credits
 
-- [{{ vendorName }}](mailto:{{ email }})
+- [{{ author }}](mailto:{{ email }})
 
 ## License
 

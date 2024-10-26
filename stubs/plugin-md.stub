@@ -1,0 +1,14 @@
+---
+name: {{ name }}
+slug: {{ alias }}
+author_slug: {{ author }}
+categories: [developer-tools]
+description: {{ description }}
+discord_url:
+docs_url: https://raw.githubusercontent.com/{{ vendor }}/{{ package }}/master/README.md
+github_repository: {{ vendor }}/{{ package }}
+has_dark_theme: true
+has_translations: true
+versions: [3]
+publish_date: {{ date }}
+---

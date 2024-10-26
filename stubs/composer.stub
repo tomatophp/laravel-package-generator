@@ -15,7 +15,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "{{ namespace }}\\Tests\\": "tests/src/",
+            "{{ namespace }}\\Tests\\Database\\Factories\\": "tests/database/factories"
         }
     },
     "extra": {
@@ -31,8 +32,24 @@
             "email": "{{ email }}"
         }
     ],
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "scripts": {
+        "testbench": "vendor/bin/testbench package:discover --ansi",
+        "analyse": "vendor/bin/phpstan analyse src tests",
+        "test": "vendor/bin/pest",
+        "test-coverage": "vendor/bin/pest --coverage",
+        "format": "vendor/bin/pint"
+    },
     "require": {
-        "php": "^8.0.2",
-        "tomatophp/console-helpers": "^1.0"
-    }
+        "php": "^8.1|^8.2",
+        "tomatophp/console-helpers": "^1.1"
+    },
+    {{ filament }}
+    "version": "v1.0.0"
 }

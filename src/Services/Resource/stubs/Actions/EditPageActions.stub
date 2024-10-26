@@ -1,0 +1,16 @@
+<?php
+
+namespace {{ namespace }};
+
+final class EditPageActions extends BasePageActions
+{
+    use Contracts\CanRegister;
+
+    public function getDefaultActions(): array
+    {
+        return [
+            Components\ViewAction::make(),
+            Components\DeleteAction::make(),
+        ];
+    }
+}

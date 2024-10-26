@@ -9,7 +9,7 @@ use TomatoPHP\ConsoleHelpers\Traits\HandleFiles;
 use TomatoPHP\ConsoleHelpers\Traits\HandleStub;
 use TomatoPHP\ConsoleHelpers\Traits\RunCommand;
 
-class LaravelPackageGenerator extends Command
+class FilamentTestGenerator extends Command
 {
     use RunCommand;
     use HandleFiles;
@@ -22,7 +22,7 @@ class LaravelPackageGenerator extends Command
      *
      * @var string
      */
-    protected $name = 'package:generate';
+    protected $name = 'package:tests';
 
     /**
      * The console command description.
@@ -134,7 +134,6 @@ class LaravelPackageGenerator extends Command
             [
                 "namespace" => $fullNameSpace,
                 "name" => $commandClassName,
-                "title" => Str::of($packageNamePath)->replace('-', ' ')->ucfirst()->toString(),
                 "command" => $packageNamePath,
                 "packageName" => Str::of($packageNamePath)->camel()->toString(),
                 "provider" => $packageProviderName
@@ -228,12 +227,13 @@ class LaravelPackageGenerator extends Command
                 "provider" => $packageProviderName,
                 "author" => $packageAuthor,
                 "email" => $packageAuthorEmail,
-                "filament" => null
             ],
             [
                 $packagePath
             ]
         );
+
+
 
         //Generate Readme.md file
         $this->generateStubs(
@@ -248,7 +248,6 @@ class LaravelPackageGenerator extends Command
                 "author" => $packageAuthor,
                 "email" => $packageAuthorEmail,
                 "vendorName" => $vendorNamespace,
-                "plugin" => null
             ],
             [
                 $packagePath

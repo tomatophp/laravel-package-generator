@@ -1,0 +1,15 @@
+<?php
+
+namespace {{ namespace }};
+
+final class CreatePageActions extends BasePageActions
+{
+    use Contracts\CanRegister;
+
+    public function getDefaultActions(): array
+    {
+        return [
+            //
+        ];
+    }
+}

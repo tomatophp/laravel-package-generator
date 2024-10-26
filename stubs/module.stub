@@ -1,0 +1,29 @@
+{
+    "name": "{{ space }}",
+    "alias": "{{ alias }}",
+    "description": {
+        "ar": "{{ description }}",
+        "en": "{{ description }}",
+        "gr": "{{ description }}",
+        "sp": "{{ description }}"
+    },
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "{{ namespace }}\\{{ provider }}"
+    ],
+    "files": [],
+    "title": {
+        "ar": "{{ name }}",
+        "en": "{{ name }}",
+        "gr": "{{ name }}",
+        "sp": "{{ name }}"
+    },
+    "color": "#cc1448",
+    "icon": "heroicon-c-users",
+    "placeholder": "https://raw.githubusercontent.com/{{ vendor }}/{{ package }}/master/art/screenshot.jpg",
+    "type": "plugin",
+    "version": "v1.0.0",
+    "github" : "https://github.com/{{ vendor }}/{{ package }}",
+    "docs" : "https://github.com/{{ vendor }}/{{ package }}"
+}

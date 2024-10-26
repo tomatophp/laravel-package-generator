@@ -2,6 +2,7 @@
 
 namespace TomatoPHP\LaravelPackageGenerator\Console;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -9,7 +10,7 @@ use TomatoPHP\ConsoleHelpers\Traits\HandleFiles;
 use TomatoPHP\ConsoleHelpers\Traits\HandleStub;
 use TomatoPHP\ConsoleHelpers\Traits\RunCommand;
 
-class LaravelPackageGenerator extends Command
+class FilamentPluginGenerator extends Command
 {
     use RunCommand;
     use HandleFiles;
@@ -22,19 +23,19 @@ class LaravelPackageGenerator extends Command
      *
      * @var string
      */
-    protected $name = 'package:generate';
+    protected $name = 'package:filament';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'use this command to generate package boilerplate';
+    protected $description = 'use this command to generate filament plugin boilerplate';
 
     public function __construct()
     {
         parent::__construct();
-        $this->publish = __DIR__ .'/../../publish/';
+        $this->publish = __DIR__ .'/../../tomato/';
         $this->stubPath = config('laravel-package-generator.stub-path');
     }
 
@@ -48,7 +49,7 @@ class LaravelPackageGenerator extends Command
     {
         $packageName = null;
         while(empty($packageName)){
-            $packageName = $this->ask("Enter your package name");
+            $packageName = $this->ask("Enter your package name [Like: filament-users]");
             if(is_numeric($packageName[0])){
                 $this->error("Package name can't start with a number");
                 $packageName = null;
@@ -58,7 +59,7 @@ class LaravelPackageGenerator extends Command
 
         $packageVendor = null;
         while(empty($packageVendor)){
-            $packageVendor =  $this->ask("Enter your package vendor name");
+            $packageVendor =  $this->ask("Enter your package vendor name [Like: tomatophp]");
             if(is_numeric($packageVendor[0])){
                 $this->error("Vendor name can't start with a number");
                 $packageVendor = null;
@@ -66,6 +67,18 @@ class LaravelPackageGenerator extends Command
         }
 
         $packageVendorString = Str::of($packageVendor);
+
+
+        $packageVendorNamespace = null;
+        while(empty($packageVendorNamespace)){
+            $packageVendorNamespace =  $this->ask("Enter your package vendor namespace [Like: TomatoPHP]");
+            if(is_numeric($packageVendorNamespace[0])){
+                $this->error("Vendor Namespace name can't start with a number");
+                $packageVendorNamespace = null;
+            }
+        }
+
+        $packageVendorNamespaceString = Str::of($packageVendorNamespace);
 
         //Package Meta
         $packageDescription = $this->ask("Enter your package description", "your package description will go here");
@@ -116,14 +129,15 @@ class LaravelPackageGenerator extends Command
         $packageRoute !== 'yes' ? null : $this->handelFile('routes', $packagePath. "/routes", 'folder');
         $this->handelFile('src', $packagePath. "/src", 'folder');
         $this->handelFile('tests', $packagePath. "/tests", 'folder');
+        $this->handelFile('/../stubs/github', $packagePath. "/.github", 'folder');
         $this->handelFile('LICENSE.md', $packagePath. "/LICENSE.md");
         $this->handelFile('CHANGELOG.md', $packagePath. "/CHANGELOG.md");
         $this->handelFile('SECURITY.md', $packagePath. "/SECURITY.md");
 
-
-        $vendorNamespace = Str::of($packageVendorPath)->camel()->ucfirst()->toString();
+        $vendorNamespace = Str::of($packageVendorNamespaceString)->camel()->ucfirst()->toString();
         $packageNamespace = Str::of($packageNamePath)->camel()->ucfirst()->toString();
         $packageProviderName = Str::of($packageNamePath)->camel()->ucfirst()->toString() . "ServiceProvider";
+        $packagePluginProviderName = Str::of($packageNamePath)->camel()->ucfirst()->toString() . "Plugin";
         $fullNameSpace = $vendorNamespace . "\\". $packageNamespace;
 
         //Build Stubs Files
@@ -216,6 +230,34 @@ class LaravelPackageGenerator extends Command
             ]
         );
 
+        //Generate Plugin Provider
+        $this->generateStubs(
+            $this->stubPath . 'plugin.stub',
+            $packagePath . '/src/'. $packagePluginProviderName . ".php",
+            [
+                "namespace" => $fullNameSpace,
+                "name" => $packagePluginProviderName,
+                "alias" => $packageString
+            ],
+            [
+                $packagePath . '/src'
+            ]
+        );
+
+        $filamentTestRequired = collect([]);
+        $filamentTestRequired->push('"require-dev": {');
+        $filamentTestRequired->push('       "laravel/pint": "^1.18",');
+        $filamentTestRequired->push('       "livewire/livewire": "^2.10|^3.0",');
+        $filamentTestRequired->push('       "nunomaduro/larastan": "^2.9",');
+        $filamentTestRequired->push('       "orchestra/testbench": "^9.5",');
+        $filamentTestRequired->push('       "pestphp/pest": "^2.36",');
+        $filamentTestRequired->push('       "pestphp/pest-plugin-laravel": "^2.4",');
+        $filamentTestRequired->push('       "pestphp/pest-plugin-livewire": "^2.1",');
+        $filamentTestRequired->push('       "phpstan/extension-installer": "^1.4",');
+        $filamentTestRequired->push('       "phpstan/phpstan-deprecation-rules": "^1.2",');
+        $filamentTestRequired->push('       "phpstan/phpstan-phpunit": "^1.4"');
+        $filamentTestRequired->push('    },');
+
         //Generate Composer.json file
         $this->generateStubs(
             $this->stubPath . 'composer.stub',
@@ -228,12 +270,22 @@ class LaravelPackageGenerator extends Command
                 "provider" => $packageProviderName,
                 "author" => $packageAuthor,
                 "email" => $packageAuthorEmail,
-                "filament" => null
+                "filament" => $filamentTestRequired->implode("\n")
             ],
             [
                 $packagePath
             ]
         );
+
+
+        $filamentPluginMD = collect([]);
+        $filamentPluginMD->push('finally register the plugin on `/app/Providers/Filament/AdminPanelProvider.php`');
+        $filamentPluginMD->push('');
+        $filamentPluginMD->push('```php');
+        $filamentPluginMD->push('->plugin(\\'.$vendorNamespace.'\\'.$packageNamespace.'\\'.$packagePluginProviderName.'::make())');
+        $filamentPluginMD->push('```');
+        $filamentPluginMD->push('');
+
 
         //Generate Readme.md file
         $this->generateStubs(
@@ -248,7 +300,149 @@ class LaravelPackageGenerator extends Command
                 "author" => $packageAuthor,
                 "email" => $packageAuthorEmail,
                 "vendorName" => $vendorNamespace,
-                "plugin" => null
+                "plugin" => $filamentPluginMD->implode("\n")
+            ],
+            [
+                $packagePath
+            ]
+        );
+
+        //Generate test phpunit.xml
+        $this->generateStubs(
+            $this->stubPath . 'phpunit.stub',
+            $packagePath . '/phpunit.xml',
+            [
+                "vendor" => $packageVendorPath,
+                "package" => $packageNamePath,
+            ],
+            [
+                $packagePath
+            ]
+        );
+
+        //Generate plugin.md
+        $this->generateStubs(
+            $this->stubPath . 'plugin-md.stub',
+            $packagePath . '/plugin.md',
+            [
+                "name" => Str::of($packageNamePath)->replace('-', ' ')->ucfirst()->toString(),
+                "author" => $packageVendorPath,
+                "alias" => $packageString,
+                "vendor" => $packageVendorPath,
+                "package" => $packageNamePath,
+                "description" => $packageDescription,
+                "date" => Carbon::today()->toDateString()
+            ],
+            [
+                $packagePath
+            ]
+        );
+
+        //Generate plugin.md
+        $this->generateStubs(
+            $this->stubPath . 'module.stub',
+            $packagePath . '/module.json',
+            [
+                "name" => Str::of($packageNamePath)->replace('-', ' ')->ucfirst()->toString(),
+                "author" => $packageVendorPath,
+                "alias" => $packageString,
+                "vendor" => $packageVendorPath,
+                "package" => $packageNamePath,
+                "description" => $packageDescription,
+                "date" => Carbon::today()->toDateString(),
+                "space" => $packageNamespace,
+                "namespace" => $vendorNamespace ."\\\\". $packageNamespace,
+                "provider" => $packageProviderName,
+            ],
+            [
+                $packagePath
+            ]
+        );
+
+        //Generate config.yaml
+        $this->generateStubs(
+            $this->stubPath . '/ISSUE_TEMPLATE/config.stub',
+            $packagePath . '/.github/ISSUE_TEMPLATE/config.yaml',
+            [
+                "vendor" => $packageVendorPath,
+                "package" => $packageNamePath,
+            ],
+            [
+                $packagePath
+            ]
+        );
+
+        //Generate UserFactory.php
+        $this->generateStubs(
+            $this->stubPath . '/tests/database/factories/UserFactory.stub',
+            $packagePath . '/tests/database/factories/UserFactory.php',
+            [
+                "namespace" => $vendorNamespace ."\\". $packageNamespace,
+            ],
+            [
+                $packagePath
+            ]
+        );
+
+        //Generate User.php
+        $this->generateStubs(
+            $this->stubPath . '/tests/src/Models/User.stub',
+            $packagePath . '/tests/src/Models/User.php',
+            [
+                "namespace" => $vendorNamespace ."\\". $packageNamespace,
+            ],
+            [
+                $packagePath
+            ]
+        );
+
+        //Generate AdminPanelProvider.php
+        $this->generateStubs(
+            $this->stubPath . '/tests/src/AdminPanelProvider.stub',
+            $packagePath . '/tests/src/AdminPanelProvider.php',
+            [
+                "namespace" => $vendorNamespace ."\\". $packageNamespace,
+                "plugin" => $packagePluginProviderName
+            ],
+            [
+                $packagePath
+            ]
+        );
+
+        //Generate PluginTest.php
+        $this->generateStubs(
+            $this->stubPath . '/tests/src/PluginTest.stub',
+            $packagePath . '/tests/src/PluginTest.php',
+            [
+                "namespace" => $vendorNamespace ."\\". $packageNamespace,
+                "alias" => $packageString,
+                "plugin" => $packagePluginProviderName
+            ],
+            [
+                $packagePath
+            ]
+        );
+
+        //Generate TestCase.php
+        $this->generateStubs(
+            $this->stubPath . '/tests/src/TestCase.stub',
+            $packagePath . '/tests/src/TestCase.php',
+            [
+                "namespace" => $vendorNamespace ."\\". $packageNamespace,
+                "provider" => $packageProviderName,
+            ],
+            [
+                $packagePath
+            ]
+        );
+
+        //Generate PluginTest.php
+        $this->generateStubs(
+            $this->stubPath . '/tests/Pest.stub',
+            $packagePath . '/tests/Pest.php',
+            [
+                "namespace" => $vendorNamespace ."\\". $packageNamespace,
+                "provider" => $packageProviderName,
             ],
             [
                 $packagePath

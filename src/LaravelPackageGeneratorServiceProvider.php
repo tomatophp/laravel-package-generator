@@ -3,6 +3,8 @@
 namespace TomatoPHP\LaravelPackageGenerator;
 
 use Illuminate\Support\ServiceProvider;
+use TomatoPHP\LaravelPackageGenerator\Console\FilamentPluginGenerator;
+use TomatoPHP\LaravelPackageGenerator\Console\FilamentResourceClassesGenerator;
 use TomatoPHP\LaravelPackageGenerator\Console\LaravelPackageGenerator;
 
 class LaravelPackageGeneratorServiceProvider extends ServiceProvider
@@ -25,6 +27,8 @@ class LaravelPackageGeneratorServiceProvider extends ServiceProvider
         //Register generate command
         $this->commands([
             LaravelPackageGenerator::class,
+            FilamentPluginGenerator::class,
+            FilamentResourceClassesGenerator::class
         ]);
     }
 

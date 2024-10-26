@@ -1,0 +1,16 @@
+<?php
+
+use Filament\Facades\Filament;
+use  {{ namespace }}\{{ plugin }};
+
+it('registers plugin', function () {
+    $panel = Filament::getCurrentPanel();
+
+    $panel->plugins([
+        {{ plugin }}::make(),
+    ]);
+
+    expect($panel->getPlugin('{{ alias }}'))
+        ->not()
+        ->toThrow(Exception::class);
+});
